@@ -1,10 +1,16 @@
 version: 2
 
 sources:
-  - name: tpch
+  - name: tpch_sf1
     database: snowflake_sample_data
     schema: tpch_sf1
-    tables:
+    tables: 
+      - name: part
+        columns:
+          - name: p_part_key
+            tests: 
+              - unique
+              - not_null
       - name: orders
         columns:
           - name: o_orderkey
@@ -16,6 +22,10 @@ sources:
           - name: l_orderkey
             tests: #tests the foreign key relationship between lineitem.l_orderkey = orders.orderkey
               - relationships:
-                  arguments:
-                    to: source('tpch','orders')
-                    field: o_orderkey
+                  to: source('tpch_sf1','orders')
+                  field: o_orderkey
+          - name: l_partkey
+            tests:
+              - relationships:
+                  to: source('tpch_sf1','part')
+                  field: p_partkey
